@@ -1,0 +1,35 @@
+name: Build & Release EXE
+
+on:
+  push:
+    tags:
+      - 'v*'          # v1.0.1, v1.2.0 등 태그 push 시 자동 실행
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 의존성 설치
+        run: |
+          pip install PyQt5 Pillow openpyxl reportlab requests pyinstaller
+
+      - name: PyInstaller 빌드
+        run: |
+          pyinstaller --onefile --windowed --name "별따오기_이름표생성기" main.py
+
+      - name: GitHub Release 생성 + EXE 업로드
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/별따오기_이름표생성기.exe
+          body_path: RELEASE_NOTES.md   # 선택사항: 릴리즈 노트 파일
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

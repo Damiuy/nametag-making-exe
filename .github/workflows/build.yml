@@ -3,7 +3,10 @@ name: Build & Release EXE
 on:
   push:
     tags:
-      - 'v*'          # v1.0.1, v1.2.0 등 태그 push 시 자동 실행
+      - 'v*'
+
+permissions:
+  contents: write        # ← Releases 생성/업로드 권한
 
 jobs:
   build:
@@ -30,6 +33,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/별따오기_이름표생성기.exe
-          body_path: RELEASE_NOTES.md   # 선택사항: 릴리즈 노트 파일
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
